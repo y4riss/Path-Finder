@@ -33,7 +33,7 @@ body{
 }
 
 
-.options{
+.menu{
     background-color: rgb(47, 47, 47);
     position: absolute;
     top : 0;
@@ -58,8 +58,14 @@ body{
 
 .end,.end-div{
     background-color: rgb(85, 221, 85);
-
 }
+
+.solve{
+    padding : .3em .6em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
 
 .hide{
     visibility:hidden;
