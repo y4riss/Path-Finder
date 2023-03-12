@@ -8,52 +8,51 @@ class UI {
   static deleteWall(cell) {
     if (cell.classList.contains('wall')) cell.classList.remove('wall');
   }
-}
 
+  static dragDrop(container, className) {
+    const dragEnter = (e) => {
+      e.preventDefault();
+    };
+
+    const dragOver = (e) => {
+      e.preventDefault();
+      e.target.classList.add(className);
+    };
+
+    const dragLeave = (e) => {
+      e.target.classList.remove(className);
+    };
+
+    const drop = (e) => {
+      e.target.classList.add(className);
+    container.removeEventListener('dragenter', dragEnter);
+    container.removeEventListener('dragover', dragOver);
+    container.removeEventListener('dragleave', dragLeave);
+    container.removeEventListener('drop', drop);
+    };
+
+      container.addEventListener('dragenter', dragEnter);
+      container.addEventListener('dragover', dragOver);
+      container.addEventListener('dragleave', dragLeave);
+      container.addEventListener('drop', drop);
+  }
+}
 
 (function entryPoint() {
   let mouseDown = false;
   let btn = 0;
   const container = document.getElementById('grid-container');
-  const draggable = document.querySelector('.item');
-  const cells = container.childNodes;
-
-  draggable.addEventListener('dragstart', (e) => {
-    e.dataTransfer.setData('text/plain', e.target.id);
-  });
+  const startDiv = document.querySelector('.start-div');
+  const endDiv = document.querySelector('.end-div');
 
 
-
-  const dragEnter = (e) => {
-    e.preventDefault();
-  };
-
-  const dragOver = (e) => {
-    e.preventDefault();
-    e.target.classList.add('drag-over');
-  };
-
-  const dragLeave = (e) => {
-    e.target.classList.remove('drag-over');
-  };
-
-  const drop = (e) => {
-    console.log(4);
-    e.target.classList.remove('drag-over');
-    e.target.classList.add("start");
-    document.body.removeChild(draggable);
-  };
-
-
-  container.addEventListener('dragenter', dragEnter);
-  container.addEventListener('dragover', dragOver);
-  container.addEventListener('dragleave', dragLeave);
-  container.addEventListener('drop', drop);
-
-
-  container.addEventListener('keydown', (e) => {
-    console.log(e);
-  });
+  startDiv.addEventListener("dragstart",()=>{
+    UI.dragDrop(container,"start");
+  })
+  
+  endDiv.addEventListener("dragstart",()=>{
+    UI.dragDrop(container,"end");
+  })
 
   //   container.addEventListener('contextmenu', (e) => {
   //     e.preventDefault();

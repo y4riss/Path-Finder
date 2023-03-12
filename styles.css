@@ -32,27 +32,33 @@ body{
     background-color : gray;
 }
 
-.start{
-    background-color: yellow;
+
+.options{
+    background-color: rgb(47, 47, 47);
+    position: absolute;
+    top : 0;
+    width : 100%;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    gap : 10px;
 }
 
-.item{
+.start-div,.end-div{
     width : 25px;
     height : 25px;
-    background-color: red;
-    position: absolute;
-    top : 10%;
     cursor: pointer;
 
 }
 
 
-.drag-over{
-    background-color: rgba(255, 0, 0, 0.679);
+.start,.start-div{
+   background-color: yellow;
 }
 
-.start{
-    background-color: yellow;
+.end,.end-div{
+    background-color: rgb(85, 221, 85);
+
 }
 
 .hide{
