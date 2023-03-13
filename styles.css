@@ -11,6 +11,8 @@ body{
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: rgb(22, 22, 22);
+
 }
 
 #grid-container {
@@ -22,7 +24,7 @@ body{
 
   
 #grid-container div {
-    border : 1px solid rgb(190, 190, 190);
+    border : 1px solid white;
     height: 25px;
     width : 25px;
     opacity : 0;
@@ -33,12 +35,11 @@ body{
 }
 
 .wall{
-    background-color : rgb(22, 22, 22);
+    background-color : rgb(255, 255, 255);
 }
 
 
 .menu{
-    background-color: rgb(22, 22, 22);
     position: absolute;
     top : 0;
     width : 100%;
@@ -93,7 +94,7 @@ body{
 {
     max-width : 400px;
     min-width : 250px;
-    background : rgb(22, 22, 22);
+    background : rgb(41, 41, 41);
     padding : 1rem;
     position: relative;
     color : white;
