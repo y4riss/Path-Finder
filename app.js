@@ -2,7 +2,9 @@
 // let startPos = {x : 0, y : 0}
 // let destPos = {x : 0, y : 0}
 
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 
 class Maze{
@@ -22,7 +24,7 @@ class Maze{
       const row = [];
       for(let c = 0 ; c < this.cols ; c++)
       {
-        row.push(new Cell(r,c));
+        row.push(new Cell(c,r));
       }
       this.grid.push(row);
     }
@@ -39,27 +41,30 @@ class Maze{
         setTimeout(() => {
           cell.style.opacity = 1;
           container.appendChild(cell);
-        }, (r * this.cols + c) * 15);
+        }, (r * this.cols + c) * 10);
       }
     }
   }
 
   addWall(cell)
   {
-    const x = parseInt(cell.dataset.index.split(":")[0]) 
-    const y = parseInt(cell.dataset.index.split(":")[1]) 
-    this.grid[x][y].wall = true;
-    if (cell.classList.contains('cell') && !cell.classList.contains('wall')) {
+    const x = parseInt(cell.dataset.index.split(":")[1]) 
+    const y = parseInt(cell.dataset.index.split(":")[0]) 
+    if (!this.grid[y][x].wall && !this.grid[y][x].src && !this.grid[y][x].dest) {
       cell.classList.add('wall');
+      this.grid[y][x].wall = true;
     }
   }
 
   removeWall(cell)
   {
-    const x = parseInt(cell.dataset.index.split(":")[0]) 
-    const y = parseInt(cell.dataset.index.split(":")[1]) 
-    this.grid[x][y].wall = false;
-    if (cell.classList.contains('wall')) cell.classList.remove('wall');
+    const x = parseInt(cell.dataset.index.split(":")[1]) 
+    const y = parseInt(cell.dataset.index.split(":")[0]) 
+    if (this.grid[y][x].wall )
+    {
+      this.grid[y][x].wall = false;
+      cell.classList.remove('wall');
+    } 
   }
 
 }
@@ -76,7 +81,7 @@ class Cell{
     this.dest = false;
     this.div = document.createElement("div");
     this.div.classList.add("cell");
-    this.div.setAttribute("data-index",`${x}:${y}`)
+    this.div.setAttribute("data-index",`${y}:${x}`)
   }
 
 
@@ -104,13 +109,22 @@ class DragAndDrop {
 
     const drop = (e) => {
       if (!e.target.classList.contains('wall')) {
+        const startDiv = document.querySelector('.start-div');
+        const endDiv = document.querySelector('.end-div');
         e.target.classList.add(className);
-        const x = parseInt(e.target.dataset.index.split(":")[0]) 
-        const y = parseInt(e.target.dataset.index.split(":")[1]) 
+        const x = parseInt(e.target.dataset.index.split(":")[1]) 
+        const y = parseInt(e.target.dataset.index.split(":")[0]) 
         if (className === 'start')
-           maze.grid[x][y].src = true;
+        {
+          startDiv.style.pointerEvents = "none";
+          maze.grid[y][x].src = true;
+        }
         else
-          maze.grid[x][y].dest = true;
+        {
+          endDiv.style.pointerEvents = "none";
+          maze.grid[y][x].dest = true;
+
+        }
 
       }
       container.removeEventListener('dragenter', dragEnter);
@@ -126,43 +140,69 @@ class DragAndDrop {
   }
 }
 
-const solver = (grid,startPos,destPos) => {
+const solver = async () => {
     
-    const queue = [startPos]
 
-    // creating visited array and filling it with 0
-    const visited = []
-    for(let i = 0 ; i < grid.length ; i++)
+  const solution = [];
+  const grid = maze.grid;
+  let sourceCell =null;
+  let destCell = null;
+  for(let r = 0 ; r < grid.length ; r++)
+  {
+    for(let c = 0 ; c < grid[0].length ; c++)
     {
-        const visitedRow = []
-        for(let j = 0 ; j < grid[0].length ; j++)
-        visitedRow.push(0)
-        visited.push(visitedRow)
+      if(sourceCell && destCell) break;
+      if(grid[r][c].src)
+          sourceCell = grid[r][c];
+
+      else if(grid[r][c].dest)
+        destCell = grid[r][c];
+
     }
+  }
+  console.log(sourceCell,destCell);
+    const queue = [sourceCell]
 
     while (queue.length)
     {
-        const elem = queue.shift(); // dequeue node from the queue
-        visited[elem.x][elem.y] = 1; // mark the node as visited
+      const elem = queue.shift();
+      solution.push(elem);
 
-        // visiting all its neighbours
-        /*
-        [0,0,0,0]
-        [0,0,0,0]
-        [0,0,0,0]
-        [0,0,0,0]
-        */
-       if (elem.x != 0 && elem.x != grid.length - 1 && elem.y != 0 && elem.y != grid[0].length)
-       {
-        
-       }
+      if(elem.dest === true) {
+        console.log(queue);
+        return 1;
+      }
 
+      elem.visited = true;
+      if (!elem.src)
+        elem.div.style.backgroundColor = "lightblue";
+      await sleep(50);
+
+      const top = elem.y !=0 ? grid[elem.y - 1][elem.x] : null;
+      const left = elem.x != 0 ? grid[elem.y][elem.x - 1] : null;
+      const bottom = elem.y != grid.length - 1 ? grid[elem.y + 1][elem.x] : null;
+      const right = elem.x != grid[0].length - 1 ? grid[elem.y][elem.x + 1] : null;
+
+      const neighbours = [top,left,bottom,right];
+      for(let i = 0 ; i < 4 ; i++)
+      {
+          if(neighbours[i] != null && neighbours[i].wall == false && !neighbours[i].visited)
+          {        
+            if(neighbours[i].dest) return;
+            queue.push(neighbours[i]);
+            neighbours[i].visited = true;
+          }
+      }
     }
+    return 0;
 };
 
 
 const container = document.querySelector("#grid-container")
-const maze = new Maze(10,10);
+const rows = 10 //parseInt(prompt("enter number of rows")) 
+const cols = 10 //parseInt(prompt("enter number of cols")) 
+const maze = new Maze(rows,cols);
+container.style.gridTemplate= `repeat(${rows},1fr) / repeat(${cols},1fr)`
 maze.draw();
 
 
@@ -205,7 +245,9 @@ maze.draw();
   });
 
   solveBtn.addEventListener('click', () => {
-    solver(grid,startPos,destPos);
+
+
+    solver();
   });
 
 })();
