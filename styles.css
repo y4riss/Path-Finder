@@ -68,7 +68,7 @@ body{
     background-color: rgb(85, 221, 85);
 }
 
-.solve{
+.menu button{
     padding : .3em .6em;
     text-transform: uppercase;
     cursor: pointer;

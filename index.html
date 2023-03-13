@@ -14,6 +14,7 @@
         <div  id="start-div" class="start-div" draggable="true">A</div>
         <div  id="end-div" class="end-div" draggable="true">B</div>
         <button class="solve" >Start Simulation</button>
+        <button class="reset" >Reset</button>
     </div>
 
     <div id="grid-container"></div>
@@ -32,6 +33,7 @@
     <script>
         const helpDiv = document.querySelector(".help");
         const btn = document.querySelector(".help button");
+        const reset = document.querySelector(".reset");
         btn.addEventListener("click",e=>{
             if (e.target.textContent== "Next")
             {
@@ -42,6 +44,9 @@
             {
                 helpDiv.classList.add("hide");
             }
+        })
+        reset.addEventListener("click",()=>{
+            location.reload();
         })
     </script>
 </body>
