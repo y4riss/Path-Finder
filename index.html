@@ -11,12 +11,39 @@
 <body>
 
     <div class="menu">
-        <div  id="start-div" class="start-div" draggable="true"></div>
-        <div  id="end-div" class="end-div" draggable="true"></div>
-        <button class="solve" >solve</button>
+        <div  id="start-div" class="start-div" draggable="true">A</div>
+        <div  id="end-div" class="end-div" draggable="true">B</div>
+        <button class="solve" >Start Simulation</button>
     </div>
 
     <div id="grid-container"></div>
+
+    <div class="help">
+        <div class="prompt">
+            <p>Drag the source <span class="start-div" >A</span> and the destination <span  class="end-div" draggable="true">B</span>
+                and hit start simulation
+                to visualize the program
+            </p> 
+            <button >Next</button>
+            </div>
+        </div>
+    </div>
     
+    <script>
+        const helpDiv = document.querySelector(".help");
+        const btn = document.querySelector(".help button");
+        btn.addEventListener("click",e=>{
+            if (e.target.textContent== "Next")
+            {
+                console.log("yes")
+                document.querySelector(".help p").innerHTML = "You can draw walls with left click , and delet them with right click"
+                e.target.textContent = "Ok"
+            }
+            else
+            {
+                helpDiv.classList.add("hide");
+            }
+        })
+    </script>
 </body>
 </html>

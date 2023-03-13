@@ -1,7 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@200&display=swap');
 *,*::before,*::after{
     padding : 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Kanit', sans-serif;
 }
 
 body{
@@ -20,21 +22,23 @@ body{
 
   
 #grid-container div {
-    border : 1px solid rgb(139, 139, 139);
+    border : 1px solid rgb(190, 190, 190);
     height: 25px;
     width : 25px;
     opacity : 0;
     transition : all .15s ease-in-out;
     cursor : pointer;
+    text-align: center;
+
 }
 
 .wall{
-    background-color : gray;
+    background-color : rgb(22, 22, 22);
 }
 
 
 .menu{
-    background-color: rgb(47, 47, 47);
+    background-color: rgb(22, 22, 22);
     position: absolute;
     top : 0;
     width : 100%;
@@ -48,6 +52,9 @@ body{
     width : 25px;
     height : 25px;
     cursor: pointer;
+    text-align: center;
+    font-weight: bolder;
+
 
 }
 
@@ -64,9 +71,53 @@ body{
     padding : .3em .6em;
     text-transform: uppercase;
     cursor: pointer;
+    border : none;
+    outline : none;
+    background-color: rgb(132, 132, 241);
+    color : white;
+    border-radius: 4px;
+}
+
+.help{
+
+    position: absolute;
+    width : 100%;
+    height : 100vh;
+    background : rgba(0, 0, 0, 0.385);
+    display : flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.prompt
+{
+    max-width : 400px;
+    min-width : 250px;
+    background : rgb(22, 22, 22);
+    padding : 1rem;
+    position: relative;
+    color : white;
 }
 
 
+.prompt span{
+    padding-inline : 7px;
+    color : rgb(22, 22, 22);
+    font-weight: bolder;
+}
+
+.prompt button{
+    position: absolute;
+    bottom:  5px;
+    right : 5%;
+    padding : .2em .4em;
+    outline : none;
+    border : none;
+    color : white;
+    border : 1px solid white;
+    background-color: transparent;
+    cursor : pointer;
+}
 .hide{
     visibility:hidden;
 }

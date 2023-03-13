@@ -3,96 +3,79 @@
 // let destPos = {x : 0, y : 0}
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-
-class Maze{
-
-  constructor(rows,cols)
-  {
-      this.grid = [];
-      this.rows = rows;
-      this.cols = cols;
-      this.src = null;
-      this.dest = null;
+class Maze {
+  constructor(rows, cols) {
+    this.grid = [];
+    this.rows = rows;
+    this.cols = cols;
+    this.src = null;
+    this.dest = null;
   }
 
-
-  fill()
-  {
-    for(let r = 0 ; r < this.rows ; r++)
-    {
+  fill() {
+    for (let r = 0; r < this.rows; r++) {
       const row = [];
-      for(let c = 0 ; c < this.cols ; c++)
-      {
-        row.push(new Cell(c,r));
+      for (let c = 0; c < this.cols; c++) {
+        row.push(new Cell(c, r));
       }
       this.grid.push(row);
     }
   }
 
-  draw()
-  {
+  draw() {
     this.fill();
-    for(let r = 0 ; r < this.rows ; r++)
-    {
-      for(let c = 0 ; c < this.cols ; c++)
-      {
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
         const cell = this.grid[r][c].div;
         setTimeout(() => {
           cell.style.opacity = 1;
           container.appendChild(cell);
-        }, (r * this.cols + c) * 10);
+        }, (r * this.cols + c) * 5);
       }
     }
   }
 
-  addWall(cell)
-  {
-    const x = parseInt(cell.dataset.index.split(":")[1]) 
-    const y = parseInt(cell.dataset.index.split(":")[0]) 
-    if (!this.grid[y][x].wall && !this.grid[y][x].src && !this.grid[y][x].dest) {
+  addWall(cell) {
+    const x = parseInt(cell.dataset.index.split(':')[1]);
+    const y = parseInt(cell.dataset.index.split(':')[0]);
+    if (
+      !this.grid[y][x].wall &&
+      !this.grid[y][x].src &&
+      !this.grid[y][x].dest
+    ) {
       cell.classList.add('wall');
       this.grid[y][x].wall = true;
     }
   }
 
-  removeWall(cell)
-  {
-    const x = parseInt(cell.dataset.index.split(":")[1]) 
-    const y = parseInt(cell.dataset.index.split(":")[0]) 
-    if (this.grid[y][x].wall )
-    {
+  removeWall(cell) {
+    const x = parseInt(cell.dataset.index.split(':')[1]);
+    const y = parseInt(cell.dataset.index.split(':')[0]);
+    if (this.grid[y][x].wall) {
       this.grid[y][x].wall = false;
       cell.classList.remove('wall');
-    } 
+    }
   }
-
 }
 
-class Cell{
-
-  constructor(x,y)
-  {
+class Cell {
+  constructor(x, y) {
     this.x = x;
     this.y = y;
     this.visited = false;
     this.wall = false;
     this.src = false;
     this.dest = false;
-    this.div = document.createElement("div");
-    this.div.classList.add("cell");
-    this.div.setAttribute("data-index",`${y}:${x}`)
+    this.div = document.createElement('div');
+    this.div.classList.add('cell');
+    this.div.setAttribute('data-index', `${y}:${x}`);
   }
-
-
 }
 
-
 class DragAndDrop {
-
-
   static dragDrop(container, className) {
     const dragEnter = (e) => {
       e.preventDefault();
@@ -114,23 +97,19 @@ class DragAndDrop {
         const startDiv = document.querySelector('.start-div');
         const endDiv = document.querySelector('.end-div');
         e.target.classList.add(className);
-        const x = parseInt(e.target.dataset.index.split(":")[1]) 
-        const y = parseInt(e.target.dataset.index.split(":")[0]) 
-        if (className === 'start')
-        {
-          startDiv.style.pointerEvents = "none";
+        const x = parseInt(e.target.dataset.index.split(':')[1]);
+        const y = parseInt(e.target.dataset.index.split(':')[0]);
+        if (className === 'start') {
+          startDiv.style.pointerEvents = 'none';
           maze.grid[y][x].src = true;
+          maze.grid[y][x].div.textContent = 'A';
           maze.src = maze.grid[y][x];
-        }
-        else
-        {
-          endDiv.style.pointerEvents = "none";
+        } else {
+          endDiv.style.pointerEvents = 'none';
           maze.grid[y][x].dest = true;
+          maze.grid[y][x].div.textContent = 'B';
           maze.dest = maze.grid[y][x];
-
-
         }
-
       }
       container.removeEventListener('dragenter', dragEnter);
       container.removeEventListener('dragover', dragOver);
@@ -153,14 +132,13 @@ const solver = async () => {
   const visited = new Set([sourceCell]);
 
   while (queue.length) {
-
     const { cell, path } = queue.shift();
     if (cell.dest) {
       // Highlight the path
       for (const pathCell of path) {
         await sleep(15);
         if (!(pathCell.src || pathCell.dest))
-        pathCell.div.style.backgroundColor = "red";
+          pathCell.div.style.backgroundColor = 'rgb(255, 203, 32)';
       }
       return 1;
     }
@@ -174,8 +152,8 @@ const solver = async () => {
     }
     if (!cell.src) {
       // Mark the current cell as visited
-      cell.div.style.backgroundColor = "lightblue";
-      await sleep(15);
+      cell.div.style.backgroundColor = 'rgb(132, 132, 241)';
+      await sleep(5);
     }
   }
   return 0;
@@ -191,13 +169,12 @@ function getNeighbors(cell, grid) {
   return neighbors.filter((neighbor) => neighbor != null && !neighbor.wall);
 }
 
-const container = document.querySelector("#grid-container")
-const rows = 10 //parseInt(prompt("enter number of rows")) 
-const cols = 10 //parseInt(prompt("enter number of cols")) 
-const maze = new Maze(rows,cols);
-container.style.gridTemplate= `repeat(${rows},1fr) / repeat(${cols},1fr)`
+const container = document.querySelector('#grid-container');
+const rows = 10//parseInt(prompt('enter number of rows'));
+const cols = 10//parseInt(prompt('enter number of cols'));
+const maze = new Maze(rows, cols);
+container.style.gridTemplate = `repeat(${rows},1fr) / repeat(${cols},1fr)`;
 maze.draw();
-
 
 (function entryPoint() {
   let mouseDown = false;
@@ -205,8 +182,6 @@ maze.draw();
   const startDiv = document.querySelector('.start-div');
   const endDiv = document.querySelector('.end-div');
   const solveBtn = document.querySelector('.solve');
-
-
 
   startDiv.addEventListener('dragstart', () => {
     DragAndDrop.dragDrop(container, 'start');
@@ -238,9 +213,6 @@ maze.draw();
   });
 
   solveBtn.addEventListener('click', () => {
-
-
     solver();
   });
-
 })();
