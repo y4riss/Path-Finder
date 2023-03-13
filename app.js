@@ -14,6 +14,8 @@ class Maze{
       this.grid = [];
       this.rows = rows;
       this.cols = cols;
+      this.src = null;
+      this.dest = null;
   }
 
 
@@ -118,11 +120,14 @@ class DragAndDrop {
         {
           startDiv.style.pointerEvents = "none";
           maze.grid[y][x].src = true;
+          maze.src = maze.grid[y][x];
         }
         else
         {
           endDiv.style.pointerEvents = "none";
           maze.grid[y][x].dest = true;
+          maze.dest = maze.grid[y][x];
+
 
         }
 
@@ -141,62 +146,50 @@ class DragAndDrop {
 }
 
 const solver = async () => {
-    
-
-  const solution = [];
   const grid = maze.grid;
-  let sourceCell =null;
-  let destCell = null;
-  for(let r = 0 ; r < grid.length ; r++)
-  {
-    for(let c = 0 ; c < grid[0].length ; c++)
-    {
-      if(sourceCell && destCell) break;
-      if(grid[r][c].src)
-          sourceCell = grid[r][c];
+  let sourceCell = maze.src;
 
-      else if(grid[r][c].dest)
-        destCell = grid[r][c];
+  const queue = [{ cell: sourceCell, path: [sourceCell] }];
+  const visited = new Set([sourceCell]);
 
+  while (queue.length) {
+
+    const { cell, path } = queue.shift();
+    if (cell.dest) {
+      // Highlight the path
+      for (const pathCell of path) {
+        await sleep(15);
+        if (!(pathCell.src || pathCell.dest))
+        pathCell.div.style.backgroundColor = "red";
+      }
+      return 1;
+    }
+
+    const neighbors = getNeighbors(cell, grid);
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        visited.add(neighbor);
+        queue.push({ cell: neighbor, path: [...path, neighbor] });
+      }
+    }
+    if (!cell.src) {
+      // Mark the current cell as visited
+      cell.div.style.backgroundColor = "lightblue";
+      await sleep(15);
     }
   }
-  console.log(sourceCell,destCell);
-    const queue = [sourceCell]
-
-    while (queue.length)
-    {
-      const elem = queue.shift();
-      solution.push(elem);
-
-      if(elem.dest === true) {
-        console.log(queue);
-        return 1;
-      }
-
-      elem.visited = true;
-      if (!elem.src)
-        elem.div.style.backgroundColor = "lightblue";
-      await sleep(50);
-
-      const top = elem.y !=0 ? grid[elem.y - 1][elem.x] : null;
-      const left = elem.x != 0 ? grid[elem.y][elem.x - 1] : null;
-      const bottom = elem.y != grid.length - 1 ? grid[elem.y + 1][elem.x] : null;
-      const right = elem.x != grid[0].length - 1 ? grid[elem.y][elem.x + 1] : null;
-
-      const neighbours = [top,left,bottom,right];
-      for(let i = 0 ; i < 4 ; i++)
-      {
-          if(neighbours[i] != null && neighbours[i].wall == false && !neighbours[i].visited)
-          {        
-            if(neighbours[i].dest) return;
-            queue.push(neighbours[i]);
-            neighbours[i].visited = true;
-          }
-      }
-    }
-    return 0;
+  return 0;
 };
 
+function getNeighbors(cell, grid) {
+  const { x, y } = cell;
+  const top = y != 0 ? grid[y - 1][x] : null;
+  const left = x != 0 ? grid[y][x - 1] : null;
+  const bottom = y != grid.length - 1 ? grid[y + 1][x] : null;
+  const right = x != grid[0].length - 1 ? grid[y][x + 1] : null;
+  const neighbors = [top, left, bottom, right];
+  return neighbors.filter((neighbor) => neighbor != null && !neighbor.wall);
+}
 
 const container = document.querySelector("#grid-container")
 const rows = 10 //parseInt(prompt("enter number of rows")) 
