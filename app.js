@@ -1,16 +1,90 @@
-let grid = [];
-let startPos = {x : 0, y : 0}
-let destPos = {x : 0, y : 0}
-class UI {
-  static addWall(cell) {
+// let grid = [];
+// let startPos = {x : 0, y : 0}
+// let destPos = {x : 0, y : 0}
+
+
+
+
+class Maze{
+
+  constructor(rows,cols)
+  {
+      this.grid = [];
+      this.rows = rows;
+      this.cols = cols;
+  }
+
+
+  fill()
+  {
+    for(let r = 0 ; r < this.rows ; r++)
+    {
+      const row = [];
+      for(let c = 0 ; c < this.cols ; c++)
+      {
+        row.push(new Cell(r,c));
+      }
+      this.grid.push(row);
+    }
+  }
+
+  draw()
+  {
+    this.fill();
+    for(let r = 0 ; r < this.rows ; r++)
+    {
+      for(let c = 0 ; c < this.cols ; c++)
+      {
+        const cell = this.grid[r][c].div;
+        setTimeout(() => {
+          cell.style.opacity = 1;
+          container.appendChild(cell);
+        }, (r * this.cols + c) * 15);
+      }
+    }
+  }
+
+  addWall(cell)
+  {
+    const x = parseInt(cell.dataset.index.split(":")[0]) 
+    const y = parseInt(cell.dataset.index.split(":")[1]) 
+    this.grid[x][y].wall = true;
     if (cell.classList.contains('cell') && !cell.classList.contains('wall')) {
       cell.classList.add('wall');
     }
   }
 
-  static deleteWall(cell) {
+  removeWall(cell)
+  {
+    const x = parseInt(cell.dataset.index.split(":")[0]) 
+    const y = parseInt(cell.dataset.index.split(":")[1]) 
+    this.grid[x][y].wall = false;
     if (cell.classList.contains('wall')) cell.classList.remove('wall');
   }
+
+}
+
+class Cell{
+
+  constructor(x,y)
+  {
+    this.x = x;
+    this.y = y;
+    this.visited = false;
+    this.wall = false;
+    this.src = false;
+    this.dest = false;
+    this.div = document.createElement("div");
+    this.div.classList.add("cell");
+    this.div.setAttribute("data-index",`${x}:${y}`)
+  }
+
+
+}
+
+
+class DragAndDrop {
+
 
   static dragDrop(container, className) {
     const dragEnter = (e) => {
@@ -31,18 +105,13 @@ class UI {
     const drop = (e) => {
       if (!e.target.classList.contains('wall')) {
         e.target.classList.add(className);
-        const cellIndex = e.target.dataset.index;
+        const x = parseInt(e.target.dataset.index.split(":")[0]) 
+        const y = parseInt(e.target.dataset.index.split(":")[1]) 
         if (className === 'start')
-        {
-            startPos.x = Math.floor(cellIndex / grid.length)
-            startPos.y =  cellIndex % grid[0].length
-            grid[startPos.x][startPos.y] = 2;
-        }
-
+           maze.grid[x][y].src = true;
         else
-        destPos.x = Math.floor(cellIndex / grid.length)
-        destPos.y =  cellIndex % grid[0].length
-        grid[destPos.x][destPos.y] = 3;
+          maze.grid[x][y].dest = true;
+
       }
       container.removeEventListener('dragenter', dragEnter);
       container.removeEventListener('dragover', dragOver);
@@ -91,21 +160,27 @@ const solver = (grid,startPos,destPos) => {
     }
 };
 
+
+const container = document.querySelector("#grid-container")
+const maze = new Maze(10,10);
+maze.draw();
+
+
 (function entryPoint() {
   let mouseDown = false;
   let btn = 0;
-  let rows;
-  let cols;
-  const container = document.getElementById('grid-container');
   const startDiv = document.querySelector('.start-div');
   const endDiv = document.querySelector('.end-div');
   const solveBtn = document.querySelector('.solve');
+
+
+
   startDiv.addEventListener('dragstart', () => {
-    UI.dragDrop(container, 'start');
+    DragAndDrop.dragDrop(container, 'start');
   });
 
   endDiv.addEventListener('dragstart', () => {
-    UI.dragDrop(container, 'end');
+    DragAndDrop.dragDrop(container, 'end');
   });
 
   container.addEventListener('contextmenu', (e) => {
@@ -119,13 +194,9 @@ const solver = (grid,startPos,destPos) => {
   container.addEventListener('mousemove', (e) => {
     if (mouseDown) {
       if (btn === 0) {
-        UI.addWall(e.target);
-        const cellIndex = e.target.dataset.index;
-        grid[Math.floor(cellIndex / rows)][cellIndex % cols] = 1;
+        maze.addWall(e.target);
       } else {
-        UI.deleteWall(e.target);
-        const cellIndex = e.target.dataset.index;
-        grid[Math.floor(cellIndex / rows)][cellIndex % cols] = 0;
+        maze.removeWall(e.target);
       }
     }
   });
@@ -136,24 +207,5 @@ const solver = (grid,startPos,destPos) => {
   solveBtn.addEventListener('click', () => {
     solver(grid,startPos,destPos);
   });
-  const drawBoard = () => {
-    rows = 10;
-    cols = 10;
 
-    for (let i = 0; i < rows; i++) {
-      const gridRow = [];
-      for (let j = 0; j < cols; j++) {
-        gridRow.push(0);
-        const cell = document.createElement('div');
-        cell.classList.add('cell');
-        cell.setAttribute('data-index', i * cols + j);
-        setTimeout(() => {
-          cell.style.opacity = 1;
-          container.appendChild(cell);
-        }, (i * cols + j) * 15);
-      }
-      grid.push(gridRow);
-    }
-  };
-  drawBoard();
 })();
