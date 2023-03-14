@@ -33,9 +33,7 @@ body{
     text-align: center;
 }
 
-.wall{
-    background-color : rgb(255, 255, 255);
-}
+
 
 
 .menu{
@@ -120,4 +118,8 @@ body{
 }
 .hide{
     visibility:hidden;
+}
+
+.wall{
+    background-color : rgb(255, 255, 255);
 }

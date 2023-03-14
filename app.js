@@ -46,6 +46,9 @@ class Maze {
       !this.grid[y][x].dest
     ) {
       cell.classList.add('wall');
+      cell.style.backgroundColor = "white";
+      console.log('adding wall :)');
+
       this.grid[y][x].wall = true;
     }
   }
@@ -53,9 +56,24 @@ class Maze {
   removeWall(cell) {
     const x = parseInt(cell.dataset.index.split(':')[1]);
     const y = parseInt(cell.dataset.index.split(':')[0]);
-    if (this.grid[y][x].wall) {
+    if (this.grid[y][x].wall || this.grid[y][x].visited) {
       this.grid[y][x].wall = false;
-      cell.classList.remove('wall');
+      cell.style.backgroundColor = "rgb(22,22,22)";
+      if (this.grid[y][x].wall)
+        cell.classList.remove('wall');
+    }
+  }
+  reset() {
+    for (let r = 0; r < this.rows; r++) {
+      for (let c = 0; c < this.cols; c++) {
+        this.grid[r][c].visited = false;
+        if (
+          !this.grid[r][c].wall &&
+          !this.grid[r][c].src &&
+          !this.grid[r][c].dest
+        )
+          this.grid[r][c].div.style.backgroundColor = 'rgb(22, 22, 22)';
+      }
     }
   }
 }
@@ -124,6 +142,8 @@ class DragAndDrop {
 }
 
 const solver = async () => {
+  maze.reset();
+
   const grid = maze.grid;
   let sourceCell = maze.src;
   sourceCell.visited = true;
@@ -149,7 +169,7 @@ const solver = async () => {
     }
     if (!cell.src) {
       cell.div.style.backgroundColor = 'rgb(132, 132, 241)';
-      // await sleep(0);
+      // await sleep(1);
     }
   }
   return 0;
@@ -183,6 +203,16 @@ function generateMaze() {
   const endDiv = document.querySelector('.end-div');
   const solveBtn = document.querySelector('.solve');
   const generateBtn = document.querySelector('.generate');
+  const reset = document.querySelector(".reset");
+
+  reset.addEventListener("click",()=>{
+    maze = new Maze();
+    container.innerHTML = "";
+    maze.fill(false);
+    maze.draw();
+    startDiv.style.pointerEvents = "all";
+    endDiv.style.pointerEvents = "all";
+})
 
   generateBtn.addEventListener('click', (e) => {
     generateMaze();

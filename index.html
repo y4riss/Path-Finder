@@ -34,7 +34,6 @@
     <script>
         const helpDiv = document.querySelector(".help");
         const btn = document.querySelector(".help button");
-        const reset = document.querySelector(".reset");
         btn.addEventListener("click",e=>{
             if (e.target.textContent== "Next")
             {
@@ -46,9 +45,7 @@
                 helpDiv.classList.add("hide");
             }
         })
-        reset.addEventListener("click",()=>{
-            location.reload();
-        })
+
     </script>
 </body>
 </html>
