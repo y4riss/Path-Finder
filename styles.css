@@ -16,22 +16,21 @@ body{
 }
 
 #grid-container {
-    width: max-content;
+    width : 100%;
     display: grid;
-    grid-template-columns: repeat(10,1fr);
-    grid-template-rows: repeat(10, 1fr);
+    grid-template : repeat(25,1fr) / repeat(50,1fr);
+    margin-top : 2rem;
 }
 
   
 #grid-container div {
     border : 1px solid white;
-    height: 25px;
-    width : 25px;
+    height : 25px;
+    width : 100%;
     opacity : 0;
     transition : all .15s ease-in-out;
     cursor : pointer;
     text-align: center;
-
 }
 
 .wall{
@@ -47,6 +46,7 @@ body{
     justify-content: center;
     padding: 1rem;
     gap : 10px;
+    background-color: rgb(44, 44, 44);
 }
 
 .start-div,.end-div{
@@ -55,8 +55,7 @@ body{
     cursor: pointer;
     text-align: center;
     font-weight: bolder;
-
-
+    border-radius: 4px;
 }
 
 

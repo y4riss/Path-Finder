@@ -7,33 +7,32 @@ function sleep(ms) {
 }
 
 class Maze {
-  constructor(rows, cols) {
+  constructor() {
     this.grid = [];
-    this.rows = rows;
-    this.cols = cols;
+    this.rows = 25;
+    this.cols = 50;
     this.src = null;
     this.dest = null;
   }
-
-  fill() {
+  fill(wall) {
     for (let r = 0; r < this.rows; r++) {
       const row = [];
       for (let c = 0; c < this.cols; c++) {
-        row.push(new Cell(c, r));
+        row.push(new Cell(c, r, wall));
       }
       this.grid.push(row);
     }
   }
 
   draw() {
-    this.fill();
     for (let r = 0; r < this.rows; r++) {
       for (let c = 0; c < this.cols; c++) {
-        const cell = this.grid[r][c].div;
+        const cell = this.grid[r][c];
+        if (cell.wall) cell.div.style.backgroundColor = 'white';
         setTimeout(() => {
-          cell.style.opacity = 1;
-          container.appendChild(cell);
-        }, (r * this.cols + c) * 5);
+          cell.div.style.opacity = 1;
+          container.appendChild(cell.div);
+        }, (r * this.cols + c) * 0.5);
       }
     }
   }
@@ -62,14 +61,14 @@ class Maze {
 }
 
 class Cell {
-  constructor(x, y) {
+  constructor(x, y, wall) {
+    this.div = document.createElement('div');
     this.x = x;
     this.y = y;
     this.visited = false;
-    this.wall = false;
+    this.wall = wall;
     this.src = false;
     this.dest = false;
-    this.div = document.createElement('div');
     this.div.classList.add('cell');
     this.div.setAttribute('data-index', `${y}:${x}`);
   }
@@ -127,14 +126,12 @@ class DragAndDrop {
 const solver = async () => {
   const grid = maze.grid;
   let sourceCell = maze.src;
-
+  sourceCell.visited = true;
   const queue = [{ cell: sourceCell, path: [sourceCell] }];
-  const visited = new Set([sourceCell]);
 
   while (queue.length) {
     const { cell, path } = queue.shift();
     if (cell.dest) {
-      // Highlight the path
       for (const pathCell of path) {
         await sleep(15);
         if (!(pathCell.src || pathCell.dest))
@@ -143,38 +140,41 @@ const solver = async () => {
       return 1;
     }
 
-    const neighbors = getNeighbors(cell, grid);
+    const neighbors = getNeighbors(cell, grid, true);
     for (const neighbor of neighbors) {
-      if (!visited.has(neighbor)) {
-        visited.add(neighbor);
+      if (!neighbor.visited) {
+        neighbor.visited = true;
         queue.push({ cell: neighbor, path: [...path, neighbor] });
       }
     }
     if (!cell.src) {
-      // Mark the current cell as visited
       cell.div.style.backgroundColor = 'rgb(132, 132, 241)';
-      await sleep(5);
+      // await sleep(0);
     }
   }
   return 0;
 };
 
-function getNeighbors(cell, grid) {
+function getNeighbors(cell, grid, wall) {
   const { x, y } = cell;
   const top = y != 0 ? grid[y - 1][x] : null;
   const left = x != 0 ? grid[y][x - 1] : null;
   const bottom = y != grid.length - 1 ? grid[y + 1][x] : null;
   const right = x != grid[0].length - 1 ? grid[y][x + 1] : null;
-  const neighbors = [top, left, bottom, right];
-  return neighbors.filter((neighbor) => neighbor != null && !neighbor.wall);
+  const neighbors = [top, bottom, right, left];
+  return neighbors.filter(
+    (neighbor) => neighbor != null && neighbor.wall != wall
+  );
 }
 
 const container = document.querySelector('#grid-container');
-const rows = 10//parseInt(prompt('enter number of rows'));
-const cols = 10//parseInt(prompt('enter number of cols'));
-const maze = new Maze(rows, cols);
-container.style.gridTemplate = `repeat(${rows},1fr) / repeat(${cols},1fr)`;
+let maze = new Maze();
+maze.fill(false);
 maze.draw();
+
+function generateMaze() {
+  alert('not working yet...');
+}
 
 (function entryPoint() {
   let mouseDown = false;
@@ -182,6 +182,11 @@ maze.draw();
   const startDiv = document.querySelector('.start-div');
   const endDiv = document.querySelector('.end-div');
   const solveBtn = document.querySelector('.solve');
+  const generateBtn = document.querySelector('.generate');
+
+  generateBtn.addEventListener('click', (e) => {
+    generateMaze();
+  });
 
   startDiv.addEventListener('dragstart', () => {
     DragAndDrop.dragDrop(container, 'start');
