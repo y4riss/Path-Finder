@@ -183,14 +183,18 @@ const solver = async () => {
           setTimeout(() => {
             if (!cell.src)
               {
-                cell.div.style.backgroundColor = 'rgb(93, 228, 255)';
-                cell.div.style.animation = 'bg .5s ease-in-out infinite';
+                neighbor.div.style.backgroundColor = 'rgb(93, 228, 255)';
+                neighbor.div.style.animation = 'bg .10s ease-in-out infinite';
               }
-          }, 25);
-          
+          }, 10);
+
           setTimeout(() => {
-            cell.div.style.animation = 'none';
-          }, 26);
+            if (!cell.src)
+              {
+                neighbor.div.style.animation = 'none';
+              }
+          }, 11);
+          
         queue.push({ cell: neighbor, path: [...path, neighbor] });
       }
     }
