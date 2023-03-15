@@ -34,7 +34,15 @@ body{
 }
 
 
+@keyframes bg {
+   
+    
+    0%,100%{ background-color:  rgb(93, 228, 255);}
+    25%{ background-color: rgb(93, 255, 217);}
+    50%{ background-color: rgb(93, 255, 188);}
+    75%{ background-color: rgb(93, 255, 155);}
 
+}
 
 .menu{
     position: absolute;
