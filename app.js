@@ -56,6 +56,7 @@ class Maze {
   removeWall(cell) {
     const x = parseInt(cell.dataset.index.split(':')[1]);
     const y = parseInt(cell.dataset.index.split(':')[0]);
+    if(this.grid[y][x].src || this.grid[y][x].dest) return;
     if (this.grid[y][x].wall || this.grid[y][x].visited) {
       this.grid[y][x].wall = false;
       cell.style.backgroundColor = 'rgb(22,22,22)';
