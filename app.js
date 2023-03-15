@@ -153,6 +153,12 @@ class DragAndDrop {
 }
 
 const solver = async () => {
+
+  if (!maze.src || !maze.dest)
+  {
+    alert("Drag and drop the starting and the ending position to start the simulation.");
+    return 0;
+  }
   maze.reset();
 
   const grid = maze.grid;
@@ -220,8 +226,26 @@ let maze = new Maze();
 maze.fill(false);
 maze.draw();
 
-function generateMaze() {
-  alert('not working yet...');
+function generateWalls() {
+  
+
+  const startDiv = document.querySelector('.start-div');
+  const endDiv = document.querySelector('.end-div');
+
+  maze = new Maze();
+  container.innerHTML = "";
+  maze.fill(true);
+  startDiv.style.pointerEvents = 'all';
+  endDiv.style.pointerEvents = 'all';
+  for(let r= 0 ; r < maze.rows ; r++)
+  {
+    for(let c = 0 ; c < maze.cols ; c++)
+    {
+      const flag = Math.random() < 0.5 ? true : false;
+      maze.grid[r][c].wall = flag;
+    }
+  }
+  maze.draw();
 }
 
 (function entryPoint() {
@@ -243,7 +267,7 @@ function generateMaze() {
   });
 
   generateBtn.addEventListener('click', (e) => {
-    generateMaze();
+    generateWalls();
   });
 
   startDiv.addEventListener('dragstart', () => {
