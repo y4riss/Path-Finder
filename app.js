@@ -118,8 +118,11 @@ class DragAndDrop {
           startDiv.style.pointerEvents = 'none';
           maze.grid[y][x].src = true;
           maze.grid[y][x].div.textContent = 'A';
+          maze.grid[y][x].div.style.backgroundColor = 'yellow';
+
           maze.src = maze.grid[y][x];
         } else {
+          maze.grid[y][x].div.style.backgroundColor = 'rgb(85, 221, 85)';
           endDiv.style.pointerEvents = 'none';
           maze.grid[y][x].dest = true;
           maze.grid[y][x].div.textContent = 'B';
@@ -220,6 +223,7 @@ function generateWalls() {
     for (let c = 0; c < maze.cols; c++) {
       const flag = Math.random() < 0.5 ? true : false;
       maze.grid[r][c].wall = flag;
+      if (flag) maze.grid[r][c].div.classList.add("wall");
     }
   }
   maze.draw();
@@ -277,6 +281,10 @@ function generateWalls() {
   });
 
   solveBtn.addEventListener('click', () => {
-    solver();
+    container.style.pointerEvents = 'none';
+    solver().then(()=>{
+      container.style.pointerEvents = 'all';
+    })
+
   });
 })();
