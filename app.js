@@ -47,8 +47,6 @@ class Maze {
     ) {
       cell.classList.add('wall');
       cell.style.backgroundColor = 'white';
-      console.log('adding wall :)');
-
       this.grid[y][x].wall = true;
     }
   }
@@ -56,7 +54,7 @@ class Maze {
   removeWall(cell) {
     const x = parseInt(cell.dataset.index.split(':')[1]);
     const y = parseInt(cell.dataset.index.split(':')[0]);
-    if(this.grid[y][x].src || this.grid[y][x].dest) return;
+    if (this.grid[y][x].src || this.grid[y][x].dest) return;
     if (this.grid[y][x].wall || this.grid[y][x].visited) {
       this.grid[y][x].wall = false;
       cell.style.backgroundColor = 'rgb(22,22,22)';
@@ -73,18 +71,6 @@ class Maze {
           !this.grid[r][c].dest
         )
           this.grid[r][c].div.style.backgroundColor = 'rgb(22, 22, 22)';
-      }
-    }
-  }
-
-  removeAnimation()
-  {
-    console.log("removing animations")
-    for(let r= 0 ; r < this.rows ; r++)
-    {
-      for(let c = 0 ; c < this.cols ; c++)
-      {
-       this.grid[r][c].div.style.animation = "none";
       }
     }
   }
@@ -154,10 +140,10 @@ class DragAndDrop {
 }
 
 const solver = async () => {
-
-  if (!maze.src || !maze.dest)
-  {
-    alert("Drag and drop the starting and the ending position to start the simulation.");
+  if (!maze.src || !maze.dest) {
+    alert(
+      'Drag and drop the starting and the ending position to start the simulation.'
+    );
     return 0;
   }
   maze.reset();
@@ -171,9 +157,6 @@ const solver = async () => {
     const { cell, path } = queue.shift();
 
     if (cell.dest) {
-      
-      // maze.removeAnimation();
-
       for (const pathCell of path) {
         await sleep(8);
         if (!(pathCell.src || pathCell.dest))
@@ -188,25 +171,22 @@ const solver = async () => {
         neighbor.visited = true;
         if (!neighbor.dest)
           setTimeout(() => {
-            if (!cell.src)
-              {
-                neighbor.div.style.backgroundColor = 'rgb(93, 228, 255)';
-                neighbor.div.style.animation = 'bg .10s ease-in-out infinite';
-              }
+            if (!cell.src) {
+              neighbor.div.style.backgroundColor = 'rgb(93, 228, 255)';
+              neighbor.div.style.animation = 'bg .10s ease-in-out infinite';
+            }
           }, 10);
 
-          setTimeout(() => {
-            if (!cell.src)
-              {
-                neighbor.div.style.animation = 'none';
-              }
-          }, 11);
-          
+        setTimeout(() => {
+          if (!cell.src) {
+            neighbor.div.style.animation = 'none';
+          }
+        }, 11);
+
         queue.push({ cell: neighbor, path: [...path, neighbor] });
       }
     }
   }
-  // maze.removeAnimation();
   return 0;
 };
 
@@ -228,20 +208,16 @@ maze.fill(false);
 maze.draw();
 
 function generateWalls() {
-  
-
   const startDiv = document.querySelector('.start-div');
   const endDiv = document.querySelector('.end-div');
 
   maze = new Maze();
-  container.innerHTML = "";
+  container.innerHTML = '';
   maze.fill(true);
   startDiv.style.pointerEvents = 'all';
   endDiv.style.pointerEvents = 'all';
-  for(let r= 0 ; r < maze.rows ; r++)
-  {
-    for(let c = 0 ; c < maze.cols ; c++)
-    {
+  for (let r = 0; r < maze.rows; r++) {
+    for (let c = 0; c < maze.cols; c++) {
       const flag = Math.random() < 0.5 ? true : false;
       maze.grid[r][c].wall = flag;
     }
